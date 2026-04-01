@@ -47,6 +47,9 @@ function createChromeMock() {
     action: {
       onClicked: createEvent(),
     },
+    i18n: {
+      getMessage: vi.fn((key: string) => key),
+    },
   };
 }
 

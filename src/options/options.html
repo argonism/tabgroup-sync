@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html>
 <head>
   <meta charset="UTF-8">
-  <title>Tab Group Sync - Settings</title>
+  <title data-i18n="optionsTitle">Tab Group Sync - Settings</title>
   <style>
     * {
       box-sizing: border-box;
@@ -52,7 +52,6 @@
       margin-bottom: 20px;
     }
 
-    /* Toggle switch */
     .toggle-wrap {
       position: relative;
       display: inline-block;
@@ -119,34 +118,18 @@
       transition: background 0.15s;
     }
 
-    .mode-option:hover {
-      background: #f8f8f8;
-    }
+    .mode-option:hover { background: #f8f8f8; }
 
     .mode-option input[type="radio"] {
       margin-top: 3px;
       accent-color: #4285f4;
     }
 
-    .mode-option .label {
-      font-size: 14px;
-      font-weight: 500;
-    }
+    .mode-option .label { font-size: 14px; font-weight: 500; }
+    .mode-option .desc { font-size: 12px; color: #888; margin-top: 2px; }
 
-    .mode-option .desc {
-      font-size: 12px;
-      color: #888;
-      margin-top: 2px;
-    }
-
-    .list-section {
-      display: none;
-      margin-top: 16px;
-    }
-
-    .list-section.visible {
-      display: block;
-    }
+    .list-section { display: none; margin-top: 16px; }
+    .list-section.visible { display: block; }
 
     .list-header {
       display: flex;
@@ -155,16 +138,9 @@
       margin-bottom: 12px;
     }
 
-    .list-header h3 {
-      font-size: 14px;
-      font-weight: 500;
-    }
+    .list-header h3 { font-size: 14px; font-weight: 500; }
 
-    .add-form {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 16px;
-    }
+    .add-form { display: flex; gap: 8px; margin-bottom: 16px; }
 
     .add-form input[type="text"] {
       flex: 1;
@@ -176,9 +152,7 @@
       transition: border-color 0.15s;
     }
 
-    .add-form input[type="text"]:focus {
-      border-color: #4285f4;
-    }
+    .add-form input[type="text"]:focus { border-color: #4285f4; }
 
     .add-form select {
       padding: 8px 10px;
@@ -199,31 +173,12 @@
       transition: background 0.15s, opacity 0.15s;
     }
 
-    .btn-primary {
-      background: #4285f4;
-      color: #fff;
-    }
+    .btn-primary { background: #4285f4; color: #fff; }
+    .btn-primary:hover { background: #3367d6; }
+    .btn-danger { background: none; color: #d93025; padding: 4px 8px; font-size: 12px; }
+    .btn-danger:hover { background: #fce8e6; }
 
-    .btn-primary:hover {
-      background: #3367d6;
-    }
-
-    .btn-danger {
-      background: none;
-      color: #d93025;
-      padding: 4px 8px;
-      font-size: 12px;
-    }
-
-    .btn-danger:hover {
-      background: #fce8e6;
-    }
-
-    .list-items {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
+    .list-items { display: flex; flex-direction: column; gap: 6px; }
 
     .list-item {
       display: flex;
@@ -235,25 +190,9 @@
       font-size: 13px;
     }
 
-    .list-item .item-info {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .color-dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    .empty-state {
-      text-align: center;
-      color: #aaa;
-      font-size: 13px;
-      padding: 20px;
-    }
+    .list-item .item-info { display: flex; align-items: center; gap: 8px; }
+    .color-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+    .empty-state { text-align: center; color: #aaa; font-size: 13px; padding: 20px; }
 
     .toast {
       position: fixed;
@@ -270,36 +209,13 @@
       pointer-events: none;
     }
 
-    .toast.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    .toast.show { opacity: 1; transform: translateY(0); }
 
-    .match-type {
-      display: flex;
-      gap: 16px;
-      margin-bottom: 12px;
-      padding: 0 4px;
-    }
+    .match-type { display: flex; gap: 16px; margin-bottom: 12px; padding: 0 4px; }
+    .match-type label { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #555; cursor: pointer; }
+    .match-type input[type="radio"] { accent-color: #4285f4; }
 
-    .match-type label {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 13px;
-      color: #555;
-      cursor: pointer;
-    }
-
-    .match-type input[type="radio"] {
-      accent-color: #4285f4;
-    }
-
-    .prop-list {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
+    .prop-list { display: flex; flex-direction: column; gap: 4px; }
 
     .prop-item {
       display: flex;
@@ -311,33 +227,12 @@
       transition: background 0.15s;
     }
 
-    .prop-item:hover {
-      background: #f8f8f8;
-    }
+    .prop-item:hover { background: #f8f8f8; }
+    .prop-item input[type="checkbox"] { margin-top: 3px; accent-color: #4285f4; width: 16px; height: 16px; }
+    .prop-label { font-size: 14px; font-weight: 500; }
+    .prop-desc { font-size: 12px; color: #888; margin-top: 2px; }
 
-    .prop-item input[type="checkbox"] {
-      margin-top: 3px;
-      accent-color: #4285f4;
-      width: 16px;
-      height: 16px;
-    }
-
-    .prop-label {
-      font-size: 14px;
-      font-weight: 500;
-    }
-
-    .prop-desc {
-      font-size: 12px;
-      color: #888;
-      margin-top: 2px;
-    }
-
-    .sync-group-list {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
+    .sync-group-list { display: flex; flex-direction: column; gap: 6px; }
 
     .sync-group-item {
       display: flex;
@@ -349,50 +244,23 @@
       font-size: 13px;
     }
 
-    .sync-group-item .group-color {
-      width: 14px;
-      height: 14px;
-      border-radius: 4px;
-      flex-shrink: 0;
-    }
+    .sync-group-item .group-color { width: 14px; height: 14px; border-radius: 4px; flex-shrink: 0; }
+    .sync-group-item .group-name { flex: 1; font-weight: 500; }
+    .sync-group-item .group-windows { color: #888; font-size: 12px; white-space: nowrap; }
 
-    .sync-group-item .group-name {
-      flex: 1;
-      font-weight: 500;
-    }
-
-    .sync-group-item .group-windows {
-      color: #888;
-      font-size: 12px;
-      white-space: nowrap;
-    }
-
-    .btn-sync {
-      background: #188038;
-      color: #fff;
-      padding: 8px 18px;
-      font-size: 13px;
-      white-space: nowrap;
-    }
-
-    .btn-sync:hover {
-      background: #137333;
-    }
-
-    .btn-sync:disabled {
-      background: #aaa;
-      cursor: not-allowed;
-    }
+    .btn-sync { background: #188038; color: #fff; padding: 8px 18px; font-size: 13px; white-space: nowrap; }
+    .btn-sync:hover { background: #137333; }
+    .btn-sync:disabled { background: #aaa; cursor: not-allowed; }
   </style>
 </head>
 <body>
   <div class="top-bar">
     <div class="top-left">
-      <h1>Tab Group Sync</h1>
-      <p class="subtitle">タブグループの同期設定</p>
+      <h1 data-i18n="heading"></h1>
+      <p class="subtitle" data-i18n="subtitle"></p>
     </div>
     <div class="top-actions">
-      <button class="btn btn-sync" id="syncBtn">今すぐ同期</button>
+      <button class="btn btn-sync" id="syncBtn" data-i18n="syncNow"></button>
       <label class="toggle-wrap">
         <input type="checkbox" id="enabledToggle" checked>
         <span class="toggle-slider"></span>
@@ -402,121 +270,119 @@
   <div class="sync-status-bar" id="syncStatusBar"></div>
 
   <div class="section">
-    <h2>同期モード</h2>
+    <h2 data-i18n="syncMode"></h2>
 
     <label class="mode-option">
       <input type="radio" name="mode" value="all">
       <div>
-        <div class="label">全自動</div>
-        <div class="desc">すべてのタブグループを自動的に同期します</div>
+        <div class="label" data-i18n="modeAll"></div>
+        <div class="desc" data-i18n="modeAllDesc"></div>
       </div>
     </label>
 
     <label class="mode-option">
       <input type="radio" name="mode" value="whitelist">
       <div>
-        <div class="label">ホワイトリスト</div>
-        <div class="desc">リストに含まれるグループのみ同期します</div>
+        <div class="label" data-i18n="modeWhitelist"></div>
+        <div class="desc" data-i18n="modeWhitelistDesc"></div>
       </div>
     </label>
 
     <label class="mode-option">
       <input type="radio" name="mode" value="blacklist">
       <div>
-        <div class="label">ブラックリスト</div>
-        <div class="desc">リストに含まれるグループを同期から除外します</div>
+        <div class="label" data-i18n="modeBlacklist"></div>
+        <div class="desc" data-i18n="modeBlacklistDesc"></div>
       </div>
     </label>
   </div>
 
   <div class="section list-section" id="listSection">
     <div class="list-header">
-      <h2 id="listTitle">リスト</h2>
+      <h2 id="listTitle"></h2>
     </div>
 
     <div class="match-type">
       <label>
         <input type="radio" name="matchBy" value="title" checked>
-        グループ名で一致
+        <span data-i18n="matchByTitle"></span>
       </label>
       <label>
         <input type="radio" name="matchBy" value="color">
-        色で一致
+        <span data-i18n="matchByColor"></span>
       </label>
       <label>
         <input type="radio" name="matchBy" value="both">
-        名前＋色で一致
+        <span data-i18n="matchByBoth"></span>
       </label>
     </div>
 
     <div class="add-form">
-      <input type="text" id="inputTitle" placeholder="グループ名（例: Work）">
+      <input type="text" id="inputTitle" data-i18n-placeholder="inputGroupName">
       <select id="inputColor">
-        <option value="">色（任意）</option>
-        <option value="grey">Grey</option>
-        <option value="blue">Blue</option>
-        <option value="red">Red</option>
-        <option value="yellow">Yellow</option>
-        <option value="green">Green</option>
-        <option value="pink">Pink</option>
-        <option value="purple">Purple</option>
-        <option value="cyan">Cyan</option>
-        <option value="orange">Orange</option>
+        <option value="" data-i18n="inputColor"></option>
+        <option value="grey" data-i18n="colorGrey"></option>
+        <option value="blue" data-i18n="colorBlue"></option>
+        <option value="red" data-i18n="colorRed"></option>
+        <option value="yellow" data-i18n="colorYellow"></option>
+        <option value="green" data-i18n="colorGreen"></option>
+        <option value="pink" data-i18n="colorPink"></option>
+        <option value="purple" data-i18n="colorPurple"></option>
+        <option value="cyan" data-i18n="colorCyan"></option>
+        <option value="orange" data-i18n="colorOrange"></option>
       </select>
-      <button class="btn btn-primary" id="addBtn">追加</button>
+      <button class="btn btn-primary" id="addBtn" data-i18n="add"></button>
     </div>
 
     <div class="list-items" id="listItems"></div>
   </div>
 
   <div class="section">
-    <h2>同期する項目</h2>
-    <p style="font-size:13px; color:#666; margin-bottom:14px;">
-      同期する項目を選択してください。オフにした項目はウィンドウ間で同期されません。
-    </p>
+    <h2 data-i18n="syncProperties"></h2>
+    <p style="font-size:13px; color:#666; margin-bottom:14px;" data-i18n="syncPropertiesDesc"></p>
     <div class="prop-list">
       <label class="prop-item">
         <input type="checkbox" name="syncProp" value="title" checked>
         <div>
-          <div class="prop-label">グループ名</div>
-          <div class="prop-desc">タブグループのタイトルを同期</div>
+          <div class="prop-label" data-i18n="propTitle"></div>
+          <div class="prop-desc" data-i18n="propTitleDesc"></div>
         </div>
       </label>
       <label class="prop-item">
         <input type="checkbox" name="syncProp" value="color" checked>
         <div>
-          <div class="prop-label">色</div>
-          <div class="prop-desc">タブグループの色を同期</div>
+          <div class="prop-label" data-i18n="propColor"></div>
+          <div class="prop-desc" data-i18n="propColorDesc"></div>
         </div>
       </label>
       <label class="prop-item">
         <input type="checkbox" name="syncProp" value="collapsed" checked>
         <div>
-          <div class="prop-label">折りたたみ状態</div>
-          <div class="prop-desc">グループの開閉状態を同期</div>
+          <div class="prop-label" data-i18n="propCollapsed"></div>
+          <div class="prop-desc" data-i18n="propCollapsedDesc"></div>
         </div>
       </label>
       <label class="prop-item">
         <input type="checkbox" name="syncProp" value="tabs" checked>
         <div>
-          <div class="prop-label">タブの内容</div>
-          <div class="prop-desc">グループ内のタブ（URL）の追加・削除を同期</div>
+          <div class="prop-label" data-i18n="propTabs"></div>
+          <div class="prop-desc" data-i18n="propTabsDesc"></div>
         </div>
       </label>
       <label class="prop-item">
         <input type="checkbox" name="syncProp" value="tabOrder" checked>
         <div>
-          <div class="prop-label">タブの順序</div>
-          <div class="prop-desc">グループ内のタブの並び順を同期</div>
+          <div class="prop-label" data-i18n="propTabOrder"></div>
+          <div class="prop-desc" data-i18n="propTabOrderDesc"></div>
         </div>
       </label>
     </div>
   </div>
 
   <div class="section">
-    <h2>同期中のグループ</h2>
+    <h2 data-i18n="syncingGroups"></h2>
     <div id="syncGroupList" class="sync-group-list">
-      <div class="empty-state">読み込み中...</div>
+      <div class="empty-state" data-i18n="loading"></div>
     </div>
   </div>
 

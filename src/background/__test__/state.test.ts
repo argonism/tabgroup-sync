@@ -157,9 +157,10 @@ describe("getSyncStatus", () => {
     ]));
   });
 
-  it("shows (無題) for untitled groups", () => {
+  it("uses i18n untitled message for untitled groups", () => {
     registerGroup(100, 1, "|green");
     const status = getSyncStatus();
-    expect(status[0].title).toBe("(無題)");
+    // i18n mock returns the key itself
+    expect(status[0].title).toBe("untitled");
   });
 });

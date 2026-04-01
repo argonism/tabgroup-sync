@@ -20,6 +20,27 @@ interface Settings {
   syncProps: SyncProps;
 }
 
+// --- i18n ---
+function msg(key: string, ...substitutions: string[]): string {
+  return chrome.i18n.getMessage(key, substitutions) || key;
+}
+
+function localizeDOM(): void {
+  for (const el of document.querySelectorAll<HTMLElement>("[data-i18n]")) {
+    const key = el.dataset.i18n!;
+    if (el.tagName === "TITLE") {
+      document.title = msg(key);
+    } else {
+      el.textContent = msg(key);
+    }
+  }
+  for (const el of document.querySelectorAll<HTMLElement>("[data-i18n-placeholder]")) {
+    const key = el.dataset.i18nPlaceholder!;
+    (el as HTMLInputElement).placeholder = msg(key);
+  }
+}
+
+// --- Constants ---
 const COLOR_MAP: Record<string, string> = {
   grey: "#5f6368",
   blue: "#4285f4",
@@ -77,7 +98,7 @@ async function loadSettings(): Promise<void> {
 
 async function saveSettings(): Promise<void> {
   await chrome.storage.sync.set({ tabGroupSync: settings });
-  showToast("設定を保存しました");
+  showToast(msg("settingsSaved"));
 }
 
 // --- UI ---
@@ -100,9 +121,9 @@ function updateListVisibility(): void {
   const isList = settings.mode === "whitelist" || settings.mode === "blacklist";
   listSection.classList.toggle("visible", isList);
   if (settings.mode === "whitelist") {
-    listTitle.textContent = "同期するグループ（ホワイトリスト）";
+    listTitle.textContent = msg("listTitleWhitelist");
   } else if (settings.mode === "blacklist") {
-    listTitle.textContent = "同期しないグループ（ブラックリスト）";
+    listTitle.textContent = msg("listTitleBlacklist");
   }
   updateInputVisibility();
 }
@@ -112,13 +133,12 @@ function updateInputVisibility(): void {
   inputTitle.style.display = matchBy === "color" ? "none" : "";
   inputColor.style.display = matchBy === "title" ? "none" : "";
   inputTitle.placeholder =
-    matchBy === "both" ? "グループ名" : "グループ名（例: Work）";
+    matchBy === "both" ? msg("inputGroupNameShort") : msg("inputGroupName");
 }
 
 function renderList(): void {
   if (settings.list.length === 0) {
-    listItems.innerHTML =
-      '<div class="empty-state">リストが空です。上のフォームからグループを追加してください。</div>';
+    listItems.innerHTML = `<div class="empty-state">${escapeHtml(msg("listEmpty"))}</div>`;
     return;
   }
 
@@ -134,7 +154,7 @@ function renderList(): void {
           ${colorDot}
           <span>${escapeHtml(label)}</span>
         </div>
-        <button class="btn btn-danger" data-index="${i}">削除</button>
+        <button class="btn btn-danger" data-index="${i}">${escapeHtml(msg("delete"))}</button>
       </div>`;
     })
     .join("");
@@ -155,8 +175,8 @@ function escapeHtml(str: string): string {
   return div.innerHTML;
 }
 
-function showToast(msg: string): void {
-  toast.textContent = msg;
+function showToast(message: string): void {
+  toast.textContent = message;
   toast.classList.add("show");
   setTimeout(() => toast.classList.remove("show"), 2000);
 }
@@ -191,15 +211,15 @@ addBtn.addEventListener("click", () => {
   const matchBy = settings.matchBy;
 
   if (matchBy === "title" && !title) {
-    showToast("グループ名を入力してください");
+    showToast(msg("enterGroupName"));
     return;
   }
   if (matchBy === "color" && !color) {
-    showToast("色を選択してください");
+    showToast(msg("selectColor"));
     return;
   }
   if (matchBy === "both" && !title && !color) {
-    showToast("グループ名または色を入力してください");
+    showToast(msg("enterGroupNameOrColor"));
     return;
   }
 
@@ -211,7 +231,7 @@ addBtn.addEventListener("click", () => {
     (item) => item.title === entry.title && item.color === entry.color
   );
   if (isDup) {
-    showToast("同じ項目が既に存在します");
+    showToast(msg("duplicateEntry"));
     return;
   }
 
@@ -235,24 +255,24 @@ enabledToggle.addEventListener("change", () => {
 // --- Full Sync Button ---
 syncBtn.addEventListener("click", async () => {
   syncBtn.disabled = true;
-  syncStatusBar.textContent = "同期中...";
+  syncStatusBar.textContent = msg("syncing");
 
   try {
     const result = await chrome.runtime.sendMessage({ type: "fullSync" });
     if (result && result.success) {
-      syncStatusBar.textContent = `同期完了（${result.groupCount} グループ）`;
-      showToast("同期が完了しました");
+      syncStatusBar.textContent = msg("syncComplete", String(result.groupCount));
+      showToast(msg("syncCompleteToast"));
       refreshSyncStatus();
     } else if (result && result.error === "already running") {
-      syncStatusBar.textContent = "同期は既に実行中です";
-      showToast("同期は既に実行中です");
+      syncStatusBar.textContent = msg("syncAlreadyRunning");
+      showToast(msg("syncAlreadyRunning"));
     } else {
-      syncStatusBar.textContent = "同期エラー";
-      showToast("同期に失敗しました");
+      syncStatusBar.textContent = msg("syncError");
+      showToast(msg("syncFailed"));
     }
   } catch (_) {
-    syncStatusBar.textContent = "同期エラー";
-    showToast("同期に失敗しました");
+    syncStatusBar.textContent = msg("syncError");
+    showToast(msg("syncFailed"));
   } finally {
     syncBtn.disabled = false;
     setTimeout(() => { syncStatusBar.textContent = ""; }, 5000);
@@ -262,35 +282,31 @@ syncBtn.addEventListener("click", async () => {
 // --- Sync Status Display ---
 const syncGroupList = document.getElementById("syncGroupList")!;
 
-const STATUS_COLOR_MAP: Record<string, string> = {
-  grey: "#5f6368", blue: "#4285f4", red: "#d93025", yellow: "#f9ab00",
-  green: "#188038", pink: "#e91e63", purple: "#9334e6", cyan: "#00acc1", orange: "#fa903e",
-};
-
 async function refreshSyncStatus(): Promise<void> {
   try {
     const result = await chrome.runtime.sendMessage({ type: "getSyncStatus" });
     if (!result || !result.groups) {
-      syncGroupList.innerHTML = '<div class="empty-state">取得できませんでした</div>';
+      syncGroupList.innerHTML = `<div class="empty-state">${escapeHtml(msg("fetchError"))}</div>`;
       return;
     }
     const groups = result.groups as { title: string; color: string; windowCount: number }[];
     if (groups.length === 0) {
-      syncGroupList.innerHTML = '<div class="empty-state">同期中のグループはありません</div>';
+      syncGroupList.innerHTML = `<div class="empty-state">${escapeHtml(msg("noSyncingGroups"))}</div>`;
       return;
     }
     syncGroupList.innerHTML = groups.map((g) => `
       <div class="sync-group-item">
-        <span class="group-color" style="background:${STATUS_COLOR_MAP[g.color] || "#999"}"></span>
+        <span class="group-color" style="background:${COLOR_MAP[g.color] || "#999"}"></span>
         <span class="group-name">${escapeHtml(g.title)}</span>
-        <span class="group-windows">${g.windowCount} ウィンドウ</span>
+        <span class="group-windows">${escapeHtml(msg("windowCount", String(g.windowCount)))}</span>
       </div>
     `).join("");
   } catch (_) {
-    syncGroupList.innerHTML = '<div class="empty-state">取得できませんでした</div>';
+    syncGroupList.innerHTML = `<div class="empty-state">${escapeHtml(msg("fetchError"))}</div>`;
   }
 }
 
 // --- Init ---
+localizeDOM();
 loadSettings();
 refreshSyncStatus();

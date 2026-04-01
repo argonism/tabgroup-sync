@@ -24,6 +24,7 @@ function copyStatic() {
   writeFileSync("dist/manifest.json", JSON.stringify(manifest, null, 2));
 
   cpSync("icons", "dist/icons", { recursive: true });
+  cpSync("_locales", "dist/_locales", { recursive: true });
   cpSync("src/options/options.html", "dist/options.html");
   cpSync("src/privacy/privacy.html", "dist/privacy.html");
 

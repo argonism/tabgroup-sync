@@ -1,47 +1,27 @@
-Tab Group Sync - ウィンドウ間でタブグループを自動同期
+Keep your tab groups in sync across every Chrome window — automatically.
 
-複数のChromeウィンドウ（同一プロファイル内）でタブグループを自動的に同期する拡張機能です。
+If you use multiple Chrome windows, you know the pain: you organize your tabs into neat groups in one window, but your other windows are a mess. Tab Group Sync fixes that. Create a tab group in any window, and it instantly appears in all your other windows — same name, same color, same tabs, same order.
 
-【主な機能】
-- タブグループの名前・色・折りたたみ状態を全ウィンドウ間で同期
-- グループ内のタブ（URL）も自動で同期
-- タブの並び順も維持
-- あるウィンドウでグループを作成/削除すると、他のウィンドウにも反映
-- ページ遷移時のURL変更もリアルタイムで同期
+✦ What it syncs
+• Group name and color
+• Collapsed / expanded state
+• Tabs inside the group (URLs)
+• Tab order within the group
+• Group creation and removal
 
-【柔軟な設定】
-- 全自動モード：すべてのグループを同期
-- ホワイトリスト：指定したグループのみ同期
-- ブラックリスト：指定したグループを除外
-- 同期項目を個別にON/OFF（名前、色、折りたたみ、タブ内容、順序）
-- ワンクリックで同期のON/OFF切り替え
+Everything stays in sync in real time. Rename a group, change its color, add a tab, navigate to a new page — the change is mirrored everywhere.
 
-【プライバシー】
-- データの外部送信は一切ありません
-- 設定はChromeの同期ストレージに保存されます
-- アナリティクスやトラッキングは含まれていません
+✦ You're in control
+• Auto mode — sync everything, no setup needed
+• Whitelist — pick exactly which groups to sync
+• Blacklist — sync everything except the ones you exclude
+• Fine-grained toggles — turn off syncing for individual properties (e.g. sync name and color, but not collapsed state)
+• Master on/off switch — pause syncing with one click
+• Manual sync button — force a full sync whenever you want
 
----
+✦ Privacy first
+• Zero data leaves your browser. No servers, no analytics, no tracking.
+• Settings are stored in Chrome's built-in sync storage — nothing else.
+• Fully open source.
 
-Tab Group Sync - Automatically sync tab groups across windows
-
-A Chrome extension that automatically synchronizes tab groups across multiple browser windows within the same profile.
-
-[Features]
-- Sync tab group name, color, and collapsed state across all windows
-- Sync tabs (URLs) within groups automatically
-- Preserve tab order within groups
-- Creating/removing a group in one window mirrors to all others
-- Real-time URL sync when navigating within grouped tabs
-
-[Flexible Settings]
-- Auto mode: sync all groups
-- Whitelist: sync only specified groups
-- Blacklist: exclude specified groups
-- Toggle individual sync properties (name, color, collapsed, tabs, tab order)
-- One-click enable/disable
-
-[Privacy]
-- No data is sent to external servers
-- Settings stored in Chrome's sync storage only
-- No analytics or tracking
+Works with any number of windows within the same Chrome profile. Requires no sign-in and no configuration to get started — just install and go.

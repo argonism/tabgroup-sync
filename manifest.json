@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "Tab Group Sync",
+  "version": "1.2.0",
+  "description": "Synchronize tab groups (name, color, tabs, order) across multiple browser windows within the same profile",
+  "homepage_url": "https://github.com/k-ush/tab-group-sync",
+  "permissions": ["tabGroups", "tabs", "storage"],
+  "background": {
+    "service_worker": "src/background/index.js",
+    "type": "module"
+  },
+  "options_ui": {
+    "page": "src/options/options.html",
+    "open_in_tab": true
+  },
+  "action": {
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    },
+    "default_title": "Tab Group Sync"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

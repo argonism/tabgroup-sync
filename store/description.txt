@@ -1,0 +1,47 @@
+Tab Group Sync - ウィンドウ間でタブグループを自動同期
+
+複数のChromeウィンドウ（同一プロファイル内）でタブグループを自動的に同期する拡張機能です。
+
+【主な機能】
+- タブグループの名前・色・折りたたみ状態を全ウィンドウ間で同期
+- グループ内のタブ（URL）も自動で同期
+- タブの並び順も維持
+- あるウィンドウでグループを作成/削除すると、他のウィンドウにも反映
+- ページ遷移時のURL変更もリアルタイムで同期
+
+【柔軟な設定】
+- 全自動モード：すべてのグループを同期
+- ホワイトリスト：指定したグループのみ同期
+- ブラックリスト：指定したグループを除外
+- 同期項目を個別にON/OFF（名前、色、折りたたみ、タブ内容、順序）
+- ワンクリックで同期のON/OFF切り替え
+
+【プライバシー】
+- データの外部送信は一切ありません
+- 設定はChromeの同期ストレージに保存されます
+- アナリティクスやトラッキングは含まれていません
+
+---
+
+Tab Group Sync - Automatically sync tab groups across windows
+
+A Chrome extension that automatically synchronizes tab groups across multiple browser windows within the same profile.
+
+[Features]
+- Sync tab group name, color, and collapsed state across all windows
+- Sync tabs (URLs) within groups automatically
+- Preserve tab order within groups
+- Creating/removing a group in one window mirrors to all others
+- Real-time URL sync when navigating within grouped tabs
+
+[Flexible Settings]
+- Auto mode: sync all groups
+- Whitelist: sync only specified groups
+- Blacklist: exclude specified groups
+- Toggle individual sync properties (name, color, collapsed, tabs, tab order)
+- One-click enable/disable
+
+[Privacy]
+- No data is sent to external servers
+- Settings stored in Chrome's sync storage only
+- No analytics or tracking

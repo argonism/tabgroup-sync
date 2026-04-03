@@ -2,11 +2,13 @@
 
 import { groupMap, groupKey, registerGroup } from "./state";
 import { loadSettings, currentSettings } from "./settings";
+import { loadLocale } from "../shared/i18n";
 import "./listeners";
 
 async function initialize() {
   groupMap.clear();
 
+  await loadLocale();
   await loadSettings();
 
   try {

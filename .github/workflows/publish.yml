@@ -34,22 +34,23 @@ jobs:
         run: cd dist && zip -r ../extension.zip .
 
       - name: Authenticate to Google Cloud
+        id: auth
         uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/chromewebstore
 
       - name: Upload to Chrome Web Store
         run: |
-          TOKEN=$(gcloud auth print-access-token)
-          curl -f -H "Authorization: Bearer $TOKEN" \
+          curl -f -H "Authorization: Bearer ${{ steps.auth.outputs.access_token }}" \
                -X POST \
                -T extension.zip \
                "https://chromewebstore.googleapis.com/upload/v2/publishers/${{ secrets.PUBLISHER_ID }}/items/${{ secrets.EXTENSION_ID }}:upload"
 
       - name: Publish to Chrome Web Store
         run: |
-          TOKEN=$(gcloud auth print-access-token)
-          curl -f -H "Authorization: Bearer $TOKEN" \
+          curl -f -H "Authorization: Bearer ${{ steps.auth.outputs.access_token }}" \
                -X POST \
                "https://chromewebstore.googleapis.com/v2/publishers/${{ secrets.PUBLISHER_ID }}/items/${{ secrets.EXTENSION_ID }}:publish"
 

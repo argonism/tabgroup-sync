@@ -31,6 +31,18 @@
       margin: 0;
     }
 
+    .heading-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .heading-icon {
+      width: 36px;
+      height: 36px;
+      cursor: pointer;
+    }
+
     .top-bar {
       display: flex;
       justify-content: space-between;
@@ -251,13 +263,111 @@
     .btn-sync { background: #188038; color: #fff; padding: 8px 18px; font-size: 13px; white-space: nowrap; }
     .btn-sync:hover { background: #137333; }
     .btn-sync:disabled { background: #aaa; cursor: not-allowed; }
+
+    .snapshot-list { display: flex; flex-direction: column; gap: 8px; }
+
+    .snapshot-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      font-size: 13px;
+    }
+
+    .snapshot-info { display: flex; flex-direction: column; gap: 2px; }
+    .snapshot-time { font-weight: 500; }
+    .snapshot-detail { font-size: 12px; color: #888; }
+
+    .snapshot-groups-preview {
+      display: flex;
+      gap: 4px;
+      margin-top: 4px;
+      flex-wrap: wrap;
+    }
+
+    .snapshot-group-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 11px;
+      background: #e8eaed;
+      color: #555;
+    }
+
+    .snapshot-group-chip .chip-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .snapshot-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+    .btn-restore {
+      background: #4285f4;
+      color: #fff;
+      padding: 5px 12px;
+      font-size: 12px;
+    }
+
+    .btn-restore:hover { background: #3367d6; }
+
+    .btn-delete-snapshot {
+      background: none;
+      color: #999;
+      padding: 5px 8px;
+      font-size: 12px;
+    }
+
+    .btn-delete-snapshot:hover { color: #d93025; background: #fce8e6; }
+
+    .lang-section { padding: 16px 24px; }
+
+    .lang-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .lang-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .lang-icon { font-size: 18px; }
+
+    .lang-select {
+      padding: 6px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 13px;
+      background: #fff;
+      color: #333;
+      outline: none;
+      cursor: pointer;
+      min-width: 120px;
+    }
+
+    .lang-select:focus { border-color: #4285f4; }
   </style>
 </head>
 <body>
   <div class="top-bar">
     <div class="top-left">
-      <h1 data-i18n="heading"></h1>
-      <p class="subtitle" data-i18n="subtitle"></p>
+      <div class="heading-row">
+        <img class="heading-icon" id="headingIcon" src="icons/icon48.png" alt="">
+        <div>
+          <h1 data-i18n="heading"></h1>
+          <p class="subtitle" data-i18n="subtitle"></p>
+        </div>
+      </div>
     </div>
     <div class="top-actions">
       <button class="btn btn-sync" id="syncBtn" data-i18n="syncNow"></button>
@@ -383,6 +493,24 @@
     <h2 data-i18n="syncingGroups"></h2>
     <div id="syncGroupList" class="sync-group-list">
       <div class="empty-state" data-i18n="loading"></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 data-i18n="savedStates"></h2>
+    <p style="font-size:13px; color:#666; margin-bottom:14px;" data-i18n="savedStatesDesc"></p>
+    <div id="snapshotList" class="snapshot-list">
+      <div class="empty-state" data-i18n="loading"></div>
+    </div>
+  </div>
+
+  <div class="section lang-section">
+    <div class="lang-row">
+      <div class="lang-label">
+        <span class="lang-icon">&#127760;</span>
+        <span data-i18n="language"></span>
+      </div>
+      <select class="lang-select" id="langSelect"></select>
     </div>
   </div>
 

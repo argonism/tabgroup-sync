@@ -68,5 +68,15 @@
   "syncFailed": { "message": "同期に失敗しました" },
   "syncCompleteToast": { "message": "同期が完了しました" },
 
-  "untitled": { "message": "（無題）" }
+  "untitled": { "message": "（無題）" },
+  "language": { "message": "言語" },
+
+  "savedStates": { "message": "保存された状態" },
+  "savedStatesDesc": { "message": "タブグループの状態は自動的に保存されます。ブラウザ再起動後に復元できます。" },
+  "noSavedStates": { "message": "保存された状態はありません" },
+  "restore": { "message": "復元" },
+  "restoreComplete": { "message": "$count$ グループを復元しました", "placeholders": { "count": { "content": "$1" } } },
+  "restoreFailed": { "message": "復元に失敗しました" },
+  "snapshotGroups": { "message": "$count$ グループ", "placeholders": { "count": { "content": "$1" } } },
+  "snapshotDeleteConfirm": { "message": "この保存状態を削除しますか？" }
 }

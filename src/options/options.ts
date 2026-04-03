@@ -21,9 +21,8 @@ interface Settings {
 }
 
 // --- i18n ---
-function msg(key: string, ...substitutions: string[]): string {
-  return chrome.i18n.getMessage(key, substitutions) || key;
-}
+import { msg, loadLocale, saveLocale, getLocale, AVAILABLE_LOCALES } from "../shared/i18n";
+import type { Locale } from "../shared/i18n";
 
 function localizeDOM(): void {
   for (const el of document.querySelectorAll<HTMLElement>("[data-i18n]")) {
@@ -68,6 +67,11 @@ const DEFAULT_SETTINGS: Settings = {
   list: [],
   syncProps: { ...DEFAULT_SYNC_PROPS },
 };
+
+// --- Heading Icon Hover ---
+const headingIcon = document.getElementById("headingIcon") as HTMLImageElement;
+headingIcon.addEventListener("mouseenter", () => { headingIcon.src = "icons/icon_2.48.png"; });
+headingIcon.addEventListener("mouseleave", () => { headingIcon.src = "icons/icon48.png"; });
 
 // --- DOM ---
 const modeRadios = document.querySelectorAll<HTMLInputElement>('input[name="mode"]');
@@ -297,7 +301,7 @@ async function refreshSyncStatus(): Promise<void> {
     syncGroupList.innerHTML = groups.map((g) => `
       <div class="sync-group-item">
         <span class="group-color" style="background:${COLOR_MAP[g.color] || "#999"}"></span>
-        <span class="group-name">${escapeHtml(g.title)}</span>
+        <span class="group-name">${escapeHtml(g.title || msg("untitled"))}</span>
         <span class="group-windows">${escapeHtml(msg("windowCount", String(g.windowCount)))}</span>
       </div>
     `).join("");
@@ -306,7 +310,105 @@ async function refreshSyncStatus(): Promise<void> {
   }
 }
 
+// --- Language Selector ---
+const langSelect = document.getElementById("langSelect") as HTMLSelectElement;
+
+function initLangSelector(): void {
+  langSelect.innerHTML = "";
+  for (const loc of AVAILABLE_LOCALES) {
+    const opt = document.createElement("option");
+    opt.value = loc.value;
+    opt.textContent = loc.label;
+    langSelect.appendChild(opt);
+  }
+  langSelect.value = getLocale();
+}
+
+langSelect.addEventListener("change", async () => {
+  await saveLocale(langSelect.value as Locale);
+  localizeDOM();
+  // Re-apply dynamic text that localizeDOM doesn't cover
+  updateListVisibility();
+  updateInputVisibility();
+  renderList();
+  refreshSyncStatus();
+});
+
+// --- Snapshot Display ---
+const snapshotList = document.getElementById("snapshotList")!;
+
+const SNAPSHOT_COLOR_MAP: Record<string, string> = {
+  grey: "#5f6368", blue: "#4285f4", red: "#d93025", yellow: "#f9ab00",
+  green: "#188038", pink: "#e91e63", purple: "#9334e6", cyan: "#00acc1", orange: "#fa903e",
+};
+
+async function refreshSnapshots(): Promise<void> {
+  try {
+    const result = await chrome.runtime.sendMessage({ type: "getSnapshots" });
+    if (!result || !Array.isArray(result) || result.length === 0) {
+      snapshotList.innerHTML = `<div class="empty-state">${escapeHtml(msg("noSavedStates"))}</div>`;
+      return;
+    }
+
+    snapshotList.innerHTML = result.map((s: { timestamp: number; groups: { title: string; color: string; tabs: string[] }[] }) => {
+      const date = new Date(s.timestamp);
+      const timeStr = date.toLocaleString();
+      const groupCount = s.groups.length;
+      const chips = s.groups.map((g) => {
+        const dotColor = SNAPSHOT_COLOR_MAP[g.color] || "#999";
+        const name = escapeHtml(g.title || msg("untitled"));
+        const tabCount = g.tabs.length;
+        return `<span class="snapshot-group-chip"><span class="chip-dot" style="background:${dotColor}"></span>${name} (${tabCount})</span>`;
+      }).join("");
+
+      return `
+        <div class="snapshot-item">
+          <div class="snapshot-info">
+            <span class="snapshot-time">${escapeHtml(timeStr)}</span>
+            <span class="snapshot-detail">${escapeHtml(msg("snapshotGroups", String(groupCount)))}</span>
+            <div class="snapshot-groups-preview">${chips}</div>
+          </div>
+          <div class="snapshot-actions">
+            <button class="btn btn-restore" data-ts="${s.timestamp}">${escapeHtml(msg("restore"))}</button>
+            <button class="btn btn-delete-snapshot" data-ts="${s.timestamp}">&times;</button>
+          </div>
+        </div>`;
+    }).join("");
+
+    for (const btn of snapshotList.querySelectorAll<HTMLButtonElement>(".btn-restore")) {
+      btn.addEventListener("click", async (e) => {
+        const ts = parseInt((e.currentTarget as HTMLButtonElement).dataset.ts!);
+        btn.disabled = true;
+        const result = await chrome.runtime.sendMessage({ type: "restoreSnapshot", timestamp: ts });
+        if (result && result.success) {
+          showToast(msg("restoreComplete", String(result.groupCount)));
+        } else {
+          showToast(msg("restoreFailed"));
+        }
+        btn.disabled = false;
+      });
+    }
+
+    for (const btn of snapshotList.querySelectorAll<HTMLButtonElement>(".btn-delete-snapshot")) {
+      btn.addEventListener("click", async (e) => {
+        const ts = parseInt((e.currentTarget as HTMLButtonElement).dataset.ts!);
+        await chrome.runtime.sendMessage({ type: "deleteSnapshot", timestamp: ts });
+        refreshSnapshots();
+      });
+    }
+  } catch (_) {
+    snapshotList.innerHTML = `<div class="empty-state">${escapeHtml(msg("fetchError"))}</div>`;
+  }
+}
+
 // --- Init ---
-localizeDOM();
-loadSettings();
-refreshSyncStatus();
+async function init(): Promise<void> {
+  await loadLocale();
+  initLangSelector();
+  localizeDOM();
+  loadSettings();
+  refreshSyncStatus();
+  refreshSnapshots();
+}
+
+init();

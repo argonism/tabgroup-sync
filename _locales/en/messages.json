@@ -68,5 +68,15 @@
   "syncFailed": { "message": "Sync failed" },
   "syncCompleteToast": { "message": "Sync completed" },
 
-  "untitled": { "message": "(Untitled)" }
+  "untitled": { "message": "(Untitled)" },
+  "language": { "message": "Language" },
+
+  "savedStates": { "message": "Saved states" },
+  "savedStatesDesc": { "message": "Tab group states are automatically saved. You can restore them after a browser restart." },
+  "noSavedStates": { "message": "No saved states yet" },
+  "restore": { "message": "Restore" },
+  "restoreComplete": { "message": "Restored $count$ groups", "placeholders": { "count": { "content": "$1" } } },
+  "restoreFailed": { "message": "Restore failed" },
+  "snapshotGroups": { "message": "$count$ groups", "placeholders": { "count": { "content": "$1" } } },
+  "snapshotDeleteConfirm": { "message": "Delete this saved state?" }
 }

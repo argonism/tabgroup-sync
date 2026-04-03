@@ -37,6 +37,10 @@ function createChromeMock() {
         get: vi.fn().mockResolvedValue({}),
         set: vi.fn().mockResolvedValue(undefined),
       },
+      local: {
+        get: vi.fn().mockResolvedValue({}),
+        set: vi.fn().mockResolvedValue(undefined),
+      },
       onChanged: createEvent(),
     },
     runtime: {

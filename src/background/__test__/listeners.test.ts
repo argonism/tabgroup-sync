@@ -137,4 +137,47 @@ describe("runtime.onMessage listener", () => {
       expect(sendResponse).toHaveBeenCalled();
     });
   });
+
+  it("handles getSnapshots message", async () => {
+    const sendResponse = vi.fn();
+    const stored = [{ timestamp: 100, groups: [] }];
+    (chrome.storage.local.get as ReturnType<typeof vi.fn>).mockResolvedValue({
+      tabGroupSnapshots: stored,
+    });
+
+    const result = handlers.onMessage({ type: "getSnapshots" }, {}, sendResponse);
+    expect(result).toBe(true);
+
+    await vi.waitFor(() => {
+      expect(sendResponse).toHaveBeenCalledWith(stored);
+    });
+  });
+
+  it("handles restoreSnapshot message", async () => {
+    const sendResponse = vi.fn();
+    (chrome.storage.local.get as ReturnType<typeof vi.fn>).mockResolvedValue({
+      tabGroupSnapshots: [],
+    });
+
+    const result = handlers.onMessage({ type: "restoreSnapshot", timestamp: 999 }, {}, sendResponse);
+    expect(result).toBe(true);
+
+    await vi.waitFor(() => {
+      expect(sendResponse).toHaveBeenCalledWith({ success: false, groupCount: 0 });
+    });
+  });
+
+  it("handles deleteSnapshot message", async () => {
+    const sendResponse = vi.fn();
+    (chrome.storage.local.get as ReturnType<typeof vi.fn>).mockResolvedValue({
+      tabGroupSnapshots: [{ timestamp: 100, groups: [] }],
+    });
+
+    const result = handlers.onMessage({ type: "deleteSnapshot", timestamp: 100 }, {}, sendResponse);
+    expect(result).toBe(true);
+
+    await vi.waitFor(() => {
+      expect(sendResponse).toHaveBeenCalledWith({ success: true });
+    });
+  });
 });

@@ -9,6 +9,7 @@ import { handleGroupUpdated, mirrorGroupToOtherWindows, createMirrorGroup } from
 import { scheduleTabSync, scheduleAllGroupSync } from "./tab-sync";
 import { handleTabUrlChanged } from "./tab-url-sync";
 import { fullSync } from "./full-sync";
+import { scheduleSaveSnapshot, getSnapshots, restoreSnapshot, deleteSnapshot } from "./snapshot";
 
 // --- Settings Change Listener ---
 
@@ -31,6 +32,7 @@ chrome.tabGroups.onCreated.addListener(async (group) => {
 
   if (!shouldSyncGroup(group.title, group.color)) return;
   await mirrorGroupToOtherWindows(group, key);
+  scheduleSaveSnapshot();
 });
 
 chrome.tabGroups.onUpdated.addListener((group) => {
@@ -45,6 +47,7 @@ chrome.tabGroups.onUpdated.addListener((group) => {
     setTimeout(() => {
       updateTimers.delete(group.id);
       handleGroupUpdated(group);
+      scheduleSaveSnapshot();
     }, DEBOUNCE_MS)
   );
 });
@@ -141,13 +144,16 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.groupId !== undefined) {
     if (changeInfo.groupId !== -1) {
       scheduleTabSync(changeInfo.groupId);
+      scheduleSaveSnapshot();
     } else {
       scheduleAllGroupSync();
+      scheduleSaveSnapshot();
     }
   }
 
   if (changeInfo.url && tab.groupId !== undefined && tab.groupId !== -1) {
     handleTabUrlChanged(tab);
+    scheduleSaveSnapshot();
   }
 });
 
@@ -156,6 +162,7 @@ chrome.tabs.onCreated.addListener((tab) => {
   if (tabSyncInProgress.has(tab.id!)) return;
   if (tab.groupId && tab.groupId !== -1) {
     scheduleTabSync(tab.groupId);
+    scheduleSaveSnapshot();
   }
 });
 
@@ -186,6 +193,18 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   }
   if (message.type === "fullSync") {
     fullSync().then(sendResponse);
+    return true;
+  }
+  if (message.type === "getSnapshots") {
+    getSnapshots().then(sendResponse);
+    return true;
+  }
+  if (message.type === "restoreSnapshot") {
+    restoreSnapshot(message.timestamp).then(sendResponse);
+    return true;
+  }
+  if (message.type === "deleteSnapshot") {
+    deleteSnapshot(message.timestamp).then(() => sendResponse({ success: true }));
     return true;
   }
 });

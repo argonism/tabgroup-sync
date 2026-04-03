@@ -65,8 +65,7 @@ export function getSyncStatus(): SyncStatusEntry[] {
       const wId = groupWindowMap.get(gId);
       if (wId) windows.add(wId);
     }
-    const displayTitle = title || chrome.i18n.getMessage("untitled") || "(Untitled)";
-    groups.push({ title: displayTitle, color, windowCount: windows.size });
+    groups.push({ title: title || "", color, windowCount: windows.size });
   }
   return groups;
 }

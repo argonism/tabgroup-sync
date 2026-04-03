@@ -43,16 +43,24 @@ jobs:
 
       - name: Upload to Chrome Web Store
         run: |
-          curl -f -H "Authorization: Bearer ${{ steps.auth.outputs.access_token }}" \
+          RESPONSE=$(curl -s -w "\n%{http_code}" -H "Authorization: Bearer ${{ steps.auth.outputs.access_token }}" \
                -X POST \
                -T extension.zip \
-               "https://chromewebstore.googleapis.com/upload/v2/publishers/${{ secrets.PUBLISHER_ID }}/items/${{ secrets.EXTENSION_ID }}:upload"
+               "https://chromewebstore.googleapis.com/upload/v2/publishers/${{ secrets.PUBLISHER_ID }}/items/${{ secrets.EXTENSION_ID }}:upload")
+          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+          echo "$BODY"
+          if [ "$HTTP_CODE" -ge 400 ]; then echo "::error::Upload failed with HTTP $HTTP_CODE"; exit 1; fi
 
       - name: Publish to Chrome Web Store
         run: |
-          curl -f -H "Authorization: Bearer ${{ steps.auth.outputs.access_token }}" \
+          RESPONSE=$(curl -s -w "\n%{http_code}" -H "Authorization: Bearer ${{ steps.auth.outputs.access_token }}" \
                -X POST \
-               "https://chromewebstore.googleapis.com/v2/publishers/${{ secrets.PUBLISHER_ID }}/items/${{ secrets.EXTENSION_ID }}:publish"
+               "https://chromewebstore.googleapis.com/v2/publishers/${{ secrets.PUBLISHER_ID }}/items/${{ secrets.EXTENSION_ID }}:publish")
+          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+          echo "$BODY"
+          if [ "$HTTP_CODE" -ge 400 ]; then echo "::error::Publish failed with HTTP $HTTP_CODE"; exit 1; fi
 
       - name: Attach zip to release
         uses: softprops/action-gh-release@v2

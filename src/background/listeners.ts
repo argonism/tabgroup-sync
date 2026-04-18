@@ -6,7 +6,7 @@ import type { Settings } from "./settings";
 import { syncInProgress, tabSyncInProgress, windowSyncInProgress, fullSyncRunning, withSyncLock, updateTimers } from "./locks";
 import { DEBOUNCE_MS } from "./constants";
 import { handleGroupUpdated, mirrorGroupToOtherWindows, createMirrorGroup } from "./group-sync";
-import { scheduleTabSync, scheduleAllGroupSync } from "./tab-sync";
+import { scheduleTabSync, scheduleGroupSyncForWindow } from "./tab-sync";
 import { handleTabUrlChanged } from "./tab-url-sync";
 import { fullSync } from "./full-sync";
 import { scheduleSaveSnapshot, getSnapshots, restoreSnapshot, deleteSnapshot } from "./snapshot";
@@ -146,7 +146,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
       scheduleTabSync(changeInfo.groupId);
       scheduleSaveSnapshot();
     } else {
-      scheduleAllGroupSync();
+      scheduleGroupSyncForWindow(tab.windowId);
       scheduleSaveSnapshot();
     }
   }
@@ -181,7 +181,9 @@ chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
   if (fullSyncRunning) return;
   if (tabSyncInProgress.has(tabId)) return;
   if (removeInfo.isWindowClosing) return;
-  scheduleAllGroupSync();
+  // Schedule sync using groups from the window where the tab was removed,
+  // so this window's state becomes the source of truth (not the mirror).
+  scheduleGroupSyncForWindow(removeInfo.windowId);
 });
 
 // --- Message Handler ---

@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 import { groupMap, groupWindowMap, registerGroup } from "../state";
 import { currentSettings } from "../settings";
 import { tabSyncInProgress, tabSyncTimers } from "../locks";
-import { syncTabsForMirror, scheduleTabSync } from "../tab-sync";
+import { syncTabsForMirror, scheduleTabSync, scheduleGroupSyncForWindow } from "../tab-sync";
 
 beforeEach(() => {
   groupMap.clear();
@@ -118,6 +118,35 @@ describe("scheduleTabSync", () => {
     scheduleTabSync(100);
 
     expect(tabSyncTimers.has(100)).toBe(true);
+    vi.useRealTimers();
+  });
+});
+
+describe("scheduleGroupSyncForWindow", () => {
+  it("schedules sync only for groups in the specified window", () => {
+    vi.useFakeTimers();
+    registerGroup(100, 1, "Work|blue");
+    registerGroup(200, 2, "Work|blue");
+    registerGroup(300, 1, "Dev|red");
+    registerGroup(400, 2, "Dev|red");
+
+    scheduleGroupSyncForWindow(1);
+
+    // Should schedule for group 100 and 300 (window 1), not 200 or 400
+    expect(tabSyncTimers.has(100)).toBe(true);
+    expect(tabSyncTimers.has(300)).toBe(true);
+    expect(tabSyncTimers.has(200)).toBe(false);
+    expect(tabSyncTimers.has(400)).toBe(false);
+    vi.useRealTimers();
+  });
+
+  it("does nothing for window with no groups", () => {
+    vi.useFakeTimers();
+    registerGroup(100, 1, "Work|blue");
+
+    scheduleGroupSyncForWindow(99);
+
+    expect(tabSyncTimers.size).toBe(0);
     vi.useRealTimers();
   });
 });

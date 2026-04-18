@@ -31,6 +31,20 @@ export function scheduleAllGroupSync(): void {
   }
 }
 
+export function scheduleGroupSyncForWindow(windowId: number): void {
+  // Find groups belonging to the specified window and use them as source.
+  // This ensures the window where the change happened is the source of truth.
+  const seen = new Set<string>();
+  for (const [key, ids] of groupMap) {
+    for (const gId of ids) {
+      if (groupWindowMap.get(gId) === windowId && !seen.has(key)) {
+        seen.add(key);
+        scheduleTabSync(gId);
+      }
+    }
+  }
+}
+
 async function syncGroupTabs(sourceGroupId: number): Promise<void> {
   const sp = currentSettings.syncProps;
   if (!sp.tabs && !sp.tabOrder) return;

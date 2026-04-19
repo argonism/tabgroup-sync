@@ -1,6 +1,12 @@
+<p align="center">
+  <img src="icons/icon128.png" alt="Tab Group Sync" width="128" height="128">
+</p>
+
 # Tab Group Sync
 
 A Chrome extension that synchronizes tab groups (name, color, tabs, order, collapsed state) across multiple browser windows within the same profile.
+
+[**Install from the Chrome Web Store**](https://chromewebstore.google.com/detail/tab-group-sync/aglfoddkogoahnkjjipjmoglcjmlbeoc)
 
 ## Features
 
@@ -28,7 +34,7 @@ Then load the project directory as an unpacked extension from `chrome://extensio
 
 ### Chrome Web Store
 
-See the `homepage_url` in `manifest.json` for the listing.
+Install directly from the [Chrome Web Store listing](https://chromewebstore.google.com/detail/tab-group-sync/aglfoddkogoahnkjjipjmoglcjmlbeoc).
 
 ## Development
 
